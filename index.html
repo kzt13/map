@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5k map</title>
+	<link rel="stylesheet" href="styles.css">
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <button id="copy-button" style="display:none;">Copy Coordinates</button>
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 2,
+                center: { lat: 0, lng: 0 },
+				disableDefaultUI: true,
+                clickableIcons: false
+            });
+
+            let marker;
+
+            map.addListener("click", (e) => {
+                const latLng = e.latLng;
+                if (marker) {
+                    marker.setPosition(latLng);
+                } else {
+                    marker = new google.maps.Marker({
+                        position: latLng,
+                        map: map
+                    });
+                }
+
+                const lat = latLng.lat();
+                const lng = latLng.lng();
+                const copyText = `!p ${lat}, ${lng}`;
+                document.getElementById("copy-button").style.display = "block";
+                document.getElementById("copy-button").onclick = () => {
+                    navigator.clipboard.writeText(copyText).then(() => {
+                        alert("Coordinates copied to clipboard: " + copyText);
+                    }).catch((err) => {
+                        console.error("Could not copy text: ", err);
+                    });
+                };
+            });
+        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAWsLLvrj-CYkLohChFLyn0W-ilBeOI0Yc&callback=initMap&language=en">
+    </script>
+</body>
+</html>
